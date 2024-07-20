@@ -12,11 +12,15 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            padding: 10px; /* Added padding for small screens */
+            box-sizing: border-box;
         }
 
         .container {
             text-align: center;
-            width: 300px;
+            width: 100%;
+            max-width: 400px; /* Increased max-width for larger screens */
+            margin: 0 auto;
         }
 
         form {
@@ -30,7 +34,7 @@
         }
 
         input, select {
-            padding: 8px;
+            padding: 10px;
             margin-top: 5px;
             margin-bottom: 10px;
             width: 100%;
@@ -80,6 +84,31 @@
 
         td {
             font-size: 14px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                padding: 10px;
+            }
+
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+
+            .result {
+                font-size: 18px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            caption {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
