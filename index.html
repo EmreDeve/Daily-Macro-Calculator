@@ -118,7 +118,6 @@
             <label for="fatIntakePercent">Fat Intake (%)</label>
             <input type="number" id="fatIntakePercent" name="fatIntakePercent" value="30" required>
 
-            <button type="button" id="calculateButton">Calculate</button>
         </form>
         <table id="caloriesTable" style="display: none;">
             <caption>Daily Calories</caption>
@@ -156,7 +155,28 @@
         </table>
     </div>
     <script>
-        document.getElementById('calculateButton').addEventListener('click', function() {
+        document.getElementById('age').addEventListener('change', calculate);
+        document.getElementById('height').addEventListener('change', calculate);
+        document.getElementById('weight').addEventListener('change', calculate);
+        document.getElementById('activity').addEventListener('change', calculate);
+        document.getElementById('caloryDeficit').addEventListener('change', calculate);
+        document.getElementById('weightAim').addEventListener('change', onWeightAimChanged);
+        document.getElementById('fatIntakePercent').addEventListener('change', calculate);
+
+
+        calculate();
+
+
+        function onWeightAimChanged() {
+            const weightAim = document.getElementById('weightAim').value;
+            const inputField = document.getElementById('caloryDeficit');
+
+            inputField.disabled = weightAim == 0.0;
+
+            calculate();
+        }
+
+        function calculate() {
             const age = document.getElementById('age').value;
             const height = document.getElementById('height').value;
             const weight = document.getElementById('weight').value;
@@ -191,14 +211,7 @@
             document.getElementById('resultProtein').textContent = `${Math.ceil(protein)}g`;
             document.getElementById('resultCarb').textContent = `${Math.ceil(carb)}g`;
             document.getElementById('resultFat').textContent = `${Math.ceil(fat)}g`;
-        });
-
-        document.getElementById('weightAim').addEventListener('change', function() {
-            const weightAim = document.getElementById('weightAim').value;
-            const inputField = document.getElementById('caloryDeficit');
-
-            inputField.disabled = weightAim == 0.0;
-        });
+        }
     </script>
 </body>
 </html>
