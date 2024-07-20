@@ -4,32 +4,201 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Calories Calculator</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            width: 300px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        input, select {
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        caption {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #d0d0d0;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        td {
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Daily Calories Calculator</h1>
-    <form id="caloriesForm">
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" required>
+    <div class="container">
+        <h1>Daily Calories Calculator</h1>
+        <form id="caloriesForm">
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" value="22" required>
 
-        <label for="height">Height (cm):</label>
-        <input type="number" step="0.1" id="height" name="height" required>
+            <label for="height">Height (cm)</label>
+            <input type="number" step="0.1" id="height" name="height" value="181" required>
 
-        <label for="weight">Weight (kg):</label>
-        <input type="number" step="0.1" id="weight" name="weight" required>
+            <label for="weight">Weight (kg)</label>
+            <input type="number" step="0.1" id="weight" name="weight" value="75" required>
 
-        <label for="activity">Activity Level:</label>
-        <select id="activity" name="activity" required>
-            <option value="1.2">Sedentary (little or no exercise)</option>
-            <option value="1.375">Lightly active (light exercise/sports 1-3 days/week)</option>
-            <option value="1.55">Moderately active (moderate exercise/sports 3-5 days/week)</option>
-            <option value="1.725">Very active (hard exercise/sports 6-7 days a week)</option>
-            <option value="1.9">Super active (very hard exercise/sports & a physical job)</option>
-        </select>
+            <label for="activity">Activity Level</label>
+            <select id="activity" name="activity" required>
+                <option value="1.2">Sedentary (little or no exercise)</option>
+                <option value="1.375" selected>Lightly active (light exercise/sports 1-3 days/week)</option>
+                <option value="1.55">Moderately active (moderate exercise/sports 3-5 days/week)</option>
+                <option value="1.725">Very active (hard exercise/sports 6-7 days a week)</option>
+                <option value="1.9">Super active (very hard exercise/sports & a physical job)</option>
+            </select>
 
-        <button type="button" onclick="calculateCalories()">Calculate</button>
-    </form>
-    <p id="result"></p>
-    <script src="script.js"></script>
+            <label for="caloryDeficit">Calory Deficit</label>
+            <input type="number" id="caloryDeficit" name="caloryDeficit" value="400" required>
+
+            <label for="weightAim">Weight Aim</label>
+            <select id="weightAim" name="weightAim" required>
+                <option value="1">Gain Weight</option>
+                <option value="-1">Lose Weight</option>
+                <option value="0">Maintain Weight</option>
+            </select>
+
+            <label for="fatIntakePercent">Fat Intake (%)</label>
+            <input type="number" id="fatIntakePercent" name="fatIntakePercent" value="30" required>
+
+            <button type="button" id="calculateButton">Calculate</button>
+        </form>
+        <table id="caloriesTable" style="display: none;">
+            <caption>Daily Calories</caption>
+            <thead>
+                <tr>
+                    <th>BMR</th>
+                    <th>Activity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="resultRow">
+                    <td id="resultBmrCal"></td>
+                    <td id="resultActivityCal"></td>
+                    <td id="resultTotalCal"></td>
+                </tr>
+            </tbody>
+        </table>
+        <table id="macroTable" style="display: none;">
+            <caption>Daily Macros</caption>
+            <thead>
+                <tr>
+                    <th>Protein</th>
+                    <th>Carb</th>
+                    <th>Fat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="resultRow">
+                    <td id="resultProtein"></td>
+                    <td id="resultCarb"></td>
+                    <td id="resultFat"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.getElementById('calculateButton').addEventListener('click', function() {
+            const age = document.getElementById('age').value;
+            const height = document.getElementById('height').value;
+            const weight = document.getElementById('weight').value;
+            const weightLbs = weight * 2.205;
+            const activity = document.getElementById('activity').value;
+            const caloryDeficit = document.getElementById('caloryDeficit').value;
+            const weightAim = document.getElementById('weightAim').value;
+            const fatIntakePercent = document.getElementById('fatIntakePercent').value / 100;
+
+            // Harris-Benedict equation
+            const bmr = 10 * weight + 6.25 * height - 5 * age + 5; // For men
+            // For women, the equation is: BMR = 10 * weight + 6.25 * height - 5 * age - 161
+
+            const caloryBias = caloryDeficit * weightAim;
+            const dailyCalories = bmr * activity + caloryBias;
+            const activityCal = dailyCalories - bmr - caloryBias;
+
+            document.getElementById('caloriesTable').style.display = 'table';
+            document.getElementById('resultBmrCal').textContent = `${Math.ceil(bmr)}cal`;
+            document.getElementById('resultActivityCal').textContent = `${Math.ceil(activityCal)}cal`;
+            document.getElementById('resultTotalCal').textContent = `${Math.ceil(dailyCalories)}cal`;
+
+
+            const fatCal = dailyCalories * fatIntakePercent;
+            const fat = fatCal / 9.0;
+            const protein = weightLbs;
+            const proteinCal = protein * 4;
+            const carbCal = dailyCalories - fatCal - proteinCal;
+            const carb = carbCal / 4.0;
+
+            document.getElementById('macroTable').style.display = 'table';
+            document.getElementById('resultProtein').textContent = `${Math.ceil(protein)}g`;
+            document.getElementById('resultCarb').textContent = `${Math.ceil(carb)}g`;
+            document.getElementById('resultFat').textContent = `${Math.ceil(fat)}g`;
+        });
+
+        document.getElementById('weightAim').addEventListener('change', function() {
+            const weightAim = document.getElementById('weightAim').value;
+            const inputField = document.getElementById('caloryDeficit');
+
+            inputField.disabled = weightAim == 0.0;
+        });
+    </script>
 </body>
 </html>
